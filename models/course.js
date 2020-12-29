@@ -27,9 +27,37 @@ module.exports = (sequelize)=>{
   });
 
 
-  // Course.belongsTo(User);
-  // the defined model is the class itself
-  console.log(Course === sequelize.models.Course); // true
+  // Course association with User model: Course has one User
+  Course.associate = (models) => {
+
+    // Course.belongsTo(models.User , { foreignKey: 'userId' });
+    Course.belongsTo(models.User , { 
+      as: 'instructor', // alias
+
+      foreignKey: 'userId' 
+    
+    
+    });
+
+
+    // , {
+    //   as: 'director', // alias
+    //   foreignKey: {
+    //     fieldName: 'directorPersonId',
+    //     allowNull: false,
+    //   },
+    // }
+
+
+  };
+
+
+
+
+
+
+
+
 
 
 return Course;

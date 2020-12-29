@@ -26,9 +26,24 @@ module.exports = (sequelize)=>{
     modelName: 'User' // We need to choose the model name
   });
 
-  // User.hasMany(Course)
-  // the defined model is the class itself
-  console.log(User === sequelize.models.User); // true
+// User association with Course model: User has many Course
+User.associate = (models) => {
+
+  // User.hasMany(models.Course );
+  User.hasMany(models.Course , { 
+    as: 'instructor', // alias
+
+    foreignKey: 'userId' 
+  
+  
+  });
+
+
+
+};
+
+
+
 
   return User;
 };
