@@ -9,11 +9,27 @@ module.exports = (sequelize)=>{
     // Model attributes are defined here
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A course title is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a valid title'
+        }
+      }
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A course description is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a valid name'
+        }
+      }
     },
     estimatedTime: {
       type: DataTypes.STRING

@@ -33,7 +33,6 @@ router.post('/users', asyncHandler(async (req, res) => {
     await User.create(req.body);
     /////////////////////////////////// check the location (is this what was meant in the instructions?)
     res.append('Location', '/');
-    res.set('Access-Control-Expose-Headers', 'Location');
     res.status(201).json({ "message": "Account successfully created!" });
   } catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
@@ -148,7 +147,7 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 // A /api/courses POST route that will create a new course, 
 // set the Location header to the URI for the newly created course, 
 // and return a 201 HTTP status code and no content.
-router.post('/courses/',  asyncHandler(async (req, res) => {
+router.post('/courses/', authenticateUser, asyncHandler(async (req, res) => {
   try {
     const newCourse = await Course.create(req.body);
     ////////////////////////////////// to do  set the location header to the uri
