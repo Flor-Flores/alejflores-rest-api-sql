@@ -1,4 +1,4 @@
-// https://dev.to/nedsoft/a-clean-approach-to-using-express-validator-8go
+// this blog post was very helpfull and https://dev.to/nedsoft/a-clean-approach-to-using-express-validator-8go
 
 const { body, validationResult } = require('express-validator')
 

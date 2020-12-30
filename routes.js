@@ -113,8 +113,6 @@ router.get('/courses', asyncHandler(async (req, res) => {
   
 // A /api/courses/:id GET route that will return the corresponding course
 //  along with the User that owns that course and a 200 HTTP status code.
-
-
 router.get('/courses/:id', asyncHandler(async (req, res) => {
   try {
     // const course = await Course.findByPk(req.params.id); 
@@ -150,7 +148,7 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 router.post('/courses/', authenticateUser, asyncHandler(async (req, res) => {
   try {
     const newCourse = await Course.create(req.body);
-    ////////////////////////////////// to do  set the location header to the uri
+    ////////////////////////////////// to do  is this the proper way to set the location header to the uri
     res.setHeader('location', `/courses/${newCourse.id}`);
     console.log("begining of res" , res , "this is the new uri ???")
     res.status(201).end();
@@ -207,8 +205,5 @@ router.put('/courses/:id', authenticateUser, courseValidationRules(), validate, 
   }
 
 }));
-
-
-
 
 module.exports = router;

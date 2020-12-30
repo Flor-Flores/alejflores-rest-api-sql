@@ -1,10 +1,7 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-// const sequelize = new Sequelize('sqlite::memory');
 
 module.exports = (sequelize)=>{
-
   class Course extends Model {}
-
   Course.init({
     // Model attributes are defined here
     title: {
@@ -46,14 +43,8 @@ module.exports = (sequelize)=>{
   Course.associate = (models) => {
     Course.belongsTo(models.User , { 
       as: 'instructor', // alias
-      // attributes: {exclude: ['createdAt', 'updatedAt']},
-
       foreignKey: 'userId' 
-    
-    
     });
-
-
   };
 
 
