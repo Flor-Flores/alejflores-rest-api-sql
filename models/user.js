@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 // const sequelize = new Sequelize('sqlite::memory');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize)=>{
 
@@ -7,18 +8,76 @@ module.exports = (sequelize)=>{
 
   User.init({
     // Model attributes are defined here
+
+
+
+
+
+
     firstName: {
-      type: DataTypes.STRING
-      // allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A name is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a valid name'
+        }
+      }
     },
     lastName: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A name is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a valid name'
+        }
+      }
     },
     emailAddress: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        msg: 'The email address already exists!'
+      },
+      validate: {
+        isEmail: {
+          msg: 'Please provide a valid email address'
+        },
+        notNull: {
+          msg: 'An email is required'
+        },
+      },
+
     },
     password: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING, // set a virtual field
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'A password is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a valid password'
+        },
+        ////////////////////////fix the len validation
+        // len: {
+        //   args: [8, 20],
+        //   msg: 'the password must be longer than 8 characters'
+        // }
+      },
+      set(val) {
+        if (val) {
+          const hashedPassword = bcrypt.hashSync(val, 10);
+          this.setDataValue('password', hashedPassword);
+
+        }
+      },
+
     }
   }, {
     // Other model options go here

@@ -12,7 +12,8 @@ module.exports = (sequelize)=>{
       allowNull: false
     },
     description: {
-      type: DataTypes.TEXT
+      type: DataTypes.TEXT,
+      allowNull: false
     },
     estimatedTime: {
       type: DataTypes.STRING
@@ -21,32 +22,20 @@ module.exports = (sequelize)=>{
       type: DataTypes.STRING
     }
   }, {
-    // Other model options go here
-    sequelize, // We need to pass the connection instance
-    modelName: 'Course' // We need to choose the model name
+    sequelize, 
+    modelName: 'Course' 
   });
-
 
   // Course association with User model: Course has one User
   Course.associate = (models) => {
-
-    // Course.belongsTo(models.User , { foreignKey: 'userId' });
     Course.belongsTo(models.User , { 
       as: 'instructor', // alias
+      // attributes: {exclude: ['createdAt', 'updatedAt']},
 
       foreignKey: 'userId' 
     
     
     });
-
-
-    // , {
-    //   as: 'director', // alias
-    //   foreignKey: {
-    //     fieldName: 'directorPersonId',
-    //     allowNull: false,
-    //   },
-    // }
 
 
   };
