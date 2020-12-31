@@ -73,43 +73,6 @@ router.get('/courses', asyncHandler(async (req, res) => {
   }
 }));
 
-//////////////////////////////////  todo,    check the  order  of CRUD routes....
-
-  // A /api/courses/:id DELETE route that will delete the corresponding course
-  //  and return a 204 HTTP status code and no content.
-  router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
-    try {
-
-      let course = await Course.findOne({ 
-        attributes: {exclude: ['createdAt', 'updatedAt']},
-        where: { id: req.params.id },
-        include: [
-          {
-            model:User,
-            as: 'instructor',
-            attributes: ['id']
-          }
-        ],
-      });
-        if(course.userId === req.currentUser.id){
-          console.log('we did it!!!')
-          await course.destroy();
-          res.status(204).end();
-          process.exit();
-        } else {
-          res.status(403).json({ message: 'You did not create this course, therefore you can not delete it.' }).end();
-        }
-
-    } catch (error) {
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-        const errors = error.errors.map(err => err.message);
-        res.status(400).json({ errors });   
-      } else {
-        throw error;
-      }
-    }
-  
-  }));
   
 // A /api/courses/:id GET route that will return the corresponding course
 //  along with the User that owns that course and a 200 HTTP status code.
@@ -205,5 +168,46 @@ router.put('/courses/:id', authenticateUser, courseValidationRules(), validate, 
   }
 
 }));
+
+  // A /api/courses/:id DELETE route that will delete the corresponding course
+  //  and return a 204 HTTP status code and no content.
+  router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+
+      let course = await Course.findOne({ 
+        attributes: {exclude: ['createdAt', 'updatedAt']},
+        where: { id: req.params.id },
+        include: [
+          {
+            model:User,
+            as: 'instructor',
+            attributes: ['id']
+          }
+        ],
+      });
+        if(course.userId === req.currentUser.id){
+          console.log('we did it!!!')
+          await course.destroy();
+          res.status(204).end();
+          process.exit();
+        } else {
+          res.status(403).json({ message: 'You did not create this course, therefore you can not delete it.' }).end();
+        }
+
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const errors = error.errors.map(err => err.message);
+        res.status(400).json({ errors });   
+      } else {
+        throw error;
+      }
+    }
+  
+  }));
+
+
+
+
+
 
 module.exports = router;

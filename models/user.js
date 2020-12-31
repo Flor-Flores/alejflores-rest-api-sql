@@ -1,5 +1,4 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-// const sequelize = new Sequelize('sqlite::memory');
 const bcrypt = require('bcrypt');
 
 module.exports = (sequelize)=>{
@@ -8,11 +7,6 @@ module.exports = (sequelize)=>{
 
   User.init({
     // Model attributes are defined here
-
-
-
-
-
 
     firstName: {
       type: DataTypes.STRING,
@@ -63,12 +57,7 @@ module.exports = (sequelize)=>{
         },
         notEmpty: {
           msg: 'Please provide a valid password'
-        },
-        ////////////////////////fix the len validation
-        // len: {
-        //   args: [8, 20],
-        //   msg: 'the password must be longer than 8 characters'
-        // }
+        }
       },
       set(val) {
         if (val) {
@@ -86,23 +75,13 @@ module.exports = (sequelize)=>{
   });
 
 // User association with Course model: User has many Course
-User.associate = (models) => {
+  User.associate = (models) => {
 
-  // User.hasMany(models.Course );
-  User.hasMany(models.Course , { 
-    as: 'instructor', // alias
-
-    foreignKey: 'userId' 
-  
-  
-  });
-
-
-
-};
-
-
-
-
+    // User.hasMany(models.Course );
+    User.hasMany(models.Course , { 
+      as: 'instructor', // alias
+      foreignKey: 'userId' 
+    });
+  };
   return User;
 };
