@@ -1,5 +1,4 @@
 'use strict';
-
 const auth = require('basic-auth');
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
@@ -19,17 +18,12 @@ exports.authenticateUser = async (req, res, next) => {
     const user = await User.findOne({ 
       where: {emailAddress: credentials.name} ,
       attributes: {exclude: ['createdAt', 'updatedAt']}
-
-      
     });
-
     if (user) {
       console.log(user);
       const authenticated = bcrypt.compareSync(credentials.pass, user.password);
-
       if (authenticated) {
         console.log(`Authentication successful for username: ${user.firstName + ' ' + user.lastName}`);
-
         // Store the user on the Request object.
         let currentAuthenticatedUser = {
           id: user.id,
@@ -46,7 +40,6 @@ exports.authenticateUser = async (req, res, next) => {
   } else {
         message = 'Auth header not found';
   }
-
   if (message) {
     console.warn(message);
     res.status(401).json({ message: 'Access Denied' });

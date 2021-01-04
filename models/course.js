@@ -8,24 +8,32 @@ module.exports = (sequelize)=>{
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'A course title is required'
+        customValidator(value) {
+        let regex = /[^\s]/; // whitespace regex
+        let valAuth =  value.replace(regex, ''); // check for whitespace to avoid whitespace only submissions
+          if (valAuth < 10  ) {
+            throw new Error("title can't be empty or less than 10 character (not including spaces)");
+          }
         },
-        notEmpty: {
-          msg: 'Please provide a valid title'
-        }
+        notNull: {
+          msg: 'a title is required'
+        },
       }
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'A course description is required'
+        customValidator(value) {
+        let regex = /[^\s]/; // whitespace regex
+        let valAuth =  value.replace(regex, ''); // check for whitespace to avoid whitespace only submissions
+          if (valAuth < 10  ) {
+            throw new Error("description can't be empty or less than 10 character (not including spaces)");
+          }
         },
-        notEmpty: {
-          msg: 'Please provide a valid name'
-        }
+        notNull: {
+          msg: 'a title is required'
+        },
       }
     },
     estimatedTime: {

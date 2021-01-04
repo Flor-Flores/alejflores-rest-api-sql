@@ -2,22 +2,19 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 module.exports = (sequelize)=>{
-
   class User extends Model {}
-
   User.init({
     // Model attributes are defined here
-
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'A name is required'
+          msg: 'a name is required'
         },
-        notEmpty: {
-          msg: 'Please provide a valid name'
-        }
+        is: {
+          args:/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{0,}$/i, // must not start with a "space" but allows spaces in between
+          msg: 'please enter a valid name, at least one character long'}
       }
     },
     lastName: {
@@ -25,11 +22,10 @@ module.exports = (sequelize)=>{
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'A name is required'
+          msg: 'a name is required'
         },
-        notEmpty: {
-          msg: 'Please provide a valid name'
-        }
+        is: {args:/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{0,}$/i,
+        msg: 'please enter a valid last name, at least one character long'}
       }
     },
     emailAddress: {
@@ -46,27 +42,42 @@ module.exports = (sequelize)=>{
           msg: 'An email is required'
         },
       },
-
     },
     password: {
-      type: DataTypes.STRING, // set a virtual field
+      type: DataTypes.STRING, 
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'A password is required'
+          msg: 'a valid password is required, it should be at least 8 characters and not include spaces'
         },
         notEmpty: {
-          msg: 'Please provide a valid password'
-        }
+          msg: 'a password is required, it should be at least 8 characters and not include spaces'
+        },
+        notContains: {
+          args:'noSpace',
+          msg: 'please do not use spaces, password should be at least 8 characters and not include spaces'
+        },
       },
-      set(val) {
-        if (val) {
-          const hashedPassword = bcrypt.hashSync(val, 10);
-          this.setDataValue('password', hashedPassword);
-
+      set(value) {
+        // prepare to encrypt the password, if we have a password, and it is not set to null, check for whitespace, and length and validate accordingly. 
+        if (value) {
+          if ( value !== null ) {
+            // test that password does not contain spaces
+            if (/\s/.test(value)) {
+            // if it does it sets its value to noSpace, triggers notContains validation. 
+              this.setDataValue('password', 'noSpace');
+            } 
+            else  if (value.length < 8) {
+              // if it does it sets its value to noSpace, and notContains validation gets triggered. 
+                this.setDataValue('password', " ");
+            } else{
+              // if password does not contain spaces, encryp it. 
+              const hashedPassword = bcrypt.hashSync(value, 10);
+              this.setDataValue('password', hashedPassword);
+            }
+          } 
         }
-      },
-
+      }
     }
   }, {
     // Other model options go here
@@ -76,8 +87,6 @@ module.exports = (sequelize)=>{
 
 // User association with Course model: User has many Course
   User.associate = (models) => {
-
-    // User.hasMany(models.Course );
     User.hasMany(models.Course , { 
       as: 'instructor', // alias
       foreignKey: 'userId' 
@@ -85,3 +94,6 @@ module.exports = (sequelize)=>{
   };
   return User;
 };
+
+
+
