@@ -138,13 +138,13 @@ router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
   //if true, check for required fields and update, 
   //else send error,
     if(course.userId === req.currentUser.id){
-      if ( title === null || title === undefined || title === '' || title === ' ' || title.length < 10
-        || description === null || description === undefined || description === '' || description === ' ' || description.length < 10){
-          const error = new Error("please provide a valid entry: title & description can't be empty or less than 10 characters ")
-          error.status = 400;
-          console.log(error)
-          console.log(error.name)
-          throw error;
+      if ( title === null || title === undefined || title.length < 10
+        || description === null || description === undefined || description.length < 10){
+        const error = new Error("please provide a valid entry: title & description can't be empty or less than 10 characters ")
+        error.status = 400;
+        console.log(error)
+        console.log(error.name)
+        throw error;
         } else {
           course = await Course.update({
             title: req.body.title,
