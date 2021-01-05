@@ -32,7 +32,7 @@ module.exports = (sequelize)=>{
           }
         },
         notNull: {
-          msg: 'a title is required'
+          msg: 'a description is required'
         },
       }
     },

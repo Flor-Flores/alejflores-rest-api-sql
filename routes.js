@@ -117,6 +117,7 @@ router.post('/courses/', authenticateUser, asyncHandler(async (req, res) => {
 router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
   
   try {
+    const { title, description } = req.body;
     let course = await Course.findOne({ 
       attributes: {exclude: ['createdAt', 'updatedAt']},
       where: { id: req.params.id },
@@ -128,16 +129,33 @@ router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
         }
       ],
     });
+    if(course === null || course === undefined ){
+      const error = new Error('course not found');
+      error.status = 404;
+      throw error;
+    }
+// make sure course belongs to authenticated user, 
+  //if true, check for required fields and update, 
+  //else send error,
     if(course.userId === req.currentUser.id){
-      course = await Course.update({
-        title: req.body.title,
-        description: req.body.description,
-        estimatedTime: req.body.estimatedTime,
-        materialsNeeded: req.body.materialsNeeded
-      },
-        {where: { id: req.params.id } }
-      );
-      res.status(204).end();
+      if ( title === null || title === undefined || title === '' || title === ' ' || title.length < 10
+        || description === null || description === undefined || description === '' || description === ' ' || description.length < 10){
+          const error = new Error("please provide a valid entry: title & description can't be empty or less than 10 characters ")
+          error.status = 400;
+          console.log(error)
+          console.log(error.name)
+          throw error;
+        } else {
+          course = await Course.update({
+            title: req.body.title,
+            description: req.body.description,
+            estimatedTime: req.body.estimatedTime,
+            materialsNeeded: req.body.materialsNeeded
+          },
+            {where: { id: req.params.id } }
+          );
+          res.status(204).end();
+        }
     } else {
       res.status(403).json({ message: 'You did not create this course, therefore you can not edit it.' }).end();
     }
