@@ -26,8 +26,9 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 // Route that creates a new user.
 router.post('/users',  asyncHandler(async (req, res) => {
   // Create a new user instance with the req.body info.
+  const newUser = req.body;
   try {
-    user = await User.create(req.body);
+    await User.create(newUser);
     res.location('/');
     res.status(201).json({ "message": "Account successfully created!" });
   } catch (error) {
@@ -83,7 +84,6 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
     });
     res.json(course);
     res.status(200).end();
-    process.exit();
   } catch (error) {
     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
       const errors = error.errors.map(err => err.message);
@@ -115,6 +115,7 @@ router.post('/courses/', authenticateUser, asyncHandler(async (req, res) => {
 // A /api/courses/:id PUT route that will update the corresponding course (if it belongs to the currentUser via authenticateUser)
 // and return a 204 HTTP status code and no content.
 router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
+  
   try {
     let course = await Course.findOne({ 
       attributes: {exclude: ['createdAt', 'updatedAt']},
@@ -137,7 +138,6 @@ router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
         {where: { id: req.params.id } }
       );
       res.status(204).end();
-      process.exit();
     } else {
       res.status(403).json({ message: 'You did not create this course, therefore you can not edit it.' }).end();
     }
@@ -169,7 +169,6 @@ router.put('/courses/:id', authenticateUser,  asyncHandler(async (req, res) => {
         if(course.userId === req.currentUser.id){
           await course.destroy();
           res.status(204).end();
-          process.exit();
         } else {
           res.status(403).json({ message: 'You did not create this course, therefore you can not delete it.' }).end();
         }
